@@ -1,51 +1,40 @@
 # Tpmicrop
+1.1.6 Activation de l’USART2 en mode Asynchrone : Le baud rate est réglé à 115200 bits/s par défaut.
 
-Configuration et Fonctionnement
-Activation de l'USART2 en Mode Asynchrone :
-La vitesse de transmission configurée est de 115200 bits/s.
+1.2.13 Rôle de PB9 : PB9 est relié à la masse à travers une résistance pull-down. Ceci garantit que la broche reste à un niveau logique bas (0V) lorsque non connectée, évitant ainsi les états indéfinis.
 
-Connexion de PB9 à la Masse :
-La broche PB9 n'est pas directement connectée à la masse, mais via une résistance pull-down, servant de résistance de tirage vers le bas. Cette configuration garantit que la broche maintient un niveau logique bas en l'absence de connexion ou lorsque le dispositif connecté est en haute impédance, évitant ainsi des états logiques indéterminés et une consommation inutile. Cette approche est essentielle pour stabiliser la broche en mode bas jusqu'à une activation délibérée en mode haut, tout en minimisant la consommation énergétique grâce à la résistance élevée.
+1.2.14 Rôle de L1, C5 et C7 : L1 agit comme un filtre contre le bruit de haute fréquence, tandis que C5 et C7 agissent comme des condensateurs de découplage pour filtrer une large gamme de fréquences de bruit et assurer une alimentation propre et stable pour le microcontrôleur.
 
-Fonctions de L1, C5, et C7 :
-C5 et C7 agissent comme des condensateurs de découplage, avec L1 servant de filtre contre le bruit haute fréquence. C7 élimine ce bruit en le dirigeant vers la masse, tandis que C5 fournit une réserve d'énergie pour les demandes de courant plus importantes, assurant une alimentation stable pour le microcontrôleur.
+1.3.3 Page indiquant les valeurs des condensateurs : Les valeurs des condensateurs sont disponibles sur la page 3 du datasheet "buxxsd5wg-e".
 
-Informations Techniques
-Emplacement des Valeurs de Condensateurs dans le Datasheet :
+1.3.5 Page indiquant les valeurs de condensateurs : Les valeurs des condensateurs sont répertoriées sur la page 15 du datasheet "22244B-54643".
 
-Pour le premier datasheet, les informations sont à la page 3.
-Pour le deuxième datasheet, à la page 15.
-Rôle des Broches CS et LDAC :
+1.3.6 Rôle de la broche CS : La broche CS est utilisée pour activer et désactiver le dispositif DAC, permettant au microcontrôleur de communiquer avec le DAC lorsque la broche est basse.
 
-CS active ou désactive le DAC, permettant ou interdisant la communication avec le microcontrôleur selon son niveau logique.
-LDAC détermine quand la sortie du DAC est actualisée, permettant une mise à jour précise de la sortie analogique à partir d'un registre interne.
-Utilisation du Signal MISO :
-Le signal MISO est inutilisé dans cette configuration car le MCP4801 est un DAC unidirectionnel, requérant uniquement des données entrantes pour ajuster la sortie.
+1.3.7 Rôle de la broche LDAC : La broche LDAC contrôle le moment où la sortie du DAC est mise à jour, permettant une mise à jour synchronisée de la sortie du DAC.
 
-Localisation des Indications du Pinout SWD :
-Disponibles sur le site stm32-base.org, spécifiquement dans le guide de connexion des débogueurs.
+1.3.8 Non-utilisation du signal MISO : Le signal MISO n'est pas utilisé car le DAC est unidirectionnel et ne nécessite que des données entrantes du microcontrôleur.
 
-Normes et Dimensions des Composants
-Significations des Codes de Taille SMD :
-Les codes 0805, 0603, et 1206 indiquent les dimensions des composants SMD, facilitant leur identification et leur utilisation selon les besoins de conception.
+1.3.10 Où trouver les indications du pinout du connecteur SWD : Les indications sont disponibles sur le lien suivant : Connecter votre débogueur.
 
-Descriptions des Boîtiers LQFP, SOT-223, et SOIC :
-Ces abréviations décrivent différents types de boîtiers de composants, chacun ayant des caractéristiques spécifiques en termes de dimensions, de disposition des broches, et de capacité de dissipation thermique.
+1.4.3 Signification de 0805, 0603, 1206 : Ces chiffres font référence aux dimensions des composants électroniques en montage en surface (SMD).
 
-Programmation et Gestion des Interruptions
-Utilisation de __STATIC_INLINE :
-Cette directive optimise les appels de fonction en les intégrant directement dans le code, réduisant ainsi le surcoût d'exécution.
+1.4.4 Signification de LQFP, SOT-223, SOIC : Ces sigles désignent différents types de boîtiers utilisés pour les composants électroniques, chacun ayant ses propres caractéristiques.
 
-Code dans un Fichier Header :
-Placer une fonction INLINE dans un header permet sa réutilisation efficace et sa compilation directe dans le fichier source.
+3.1.4 Signification de __STATIC_INLINE : Cette directive indique au compilateur de remplacer les appels de fonction par le contenu de la fonction.
 
-Configuration des Timers
-Réglages du Prescaler et des Valeurs PSC/ARR :
-Ces paramètres ajustent la fréquence et le comportement des timers pour répondre aux exigences de timing précises du projet.
+3.1.5 Présence de code dans un fichier .h : Si une fonction INLINE est définie dans un fichier d'en-tête, elle est copiée dans le fichier source lors de la compilation.
 
-Gestion des Interruptions :
+3.2.2 Valeur du prescaler : Le prescaler est réglé à 64 pour obtenir une fréquence de 250 kHz à partir d'une fréquence de 16 MHz.
 
-La routine de service d'interruption doit être correctement configurée pour éviter les exécutions en boucle.
-Il est crucial d'écrire le flag dans la routine d'interruption pour signaler son traitement.
-Correction d'Erreur dans le Code :
-Un oubli dans le passage d'un argument par référence (utilisation d'un pointeur) a été identifié et corrigé pour assurer le fonctionnement correct de la fonctionnalité de transmission série.
+3.3.3 Valeurs de PSC et de ARR : PSC est réglé à 250 et ARR à 64 pour obtenir une interruption toutes les millisecondes.
+
+3.3.6 Localisation de la routine d'interruption : La routine de service d'interruption se trouve dans "stm3210xx_it.c".
+
+3.3.7 Différence par rapport au code généré par la HAL : Le flag d'interruption n'est pas désactivé dans le code.
+
+3.3.8 Impact de cette omission : L'interruption serait lancée en boucle, entraînant des problèmes de fonctionnement.
+
+3.3.9 Solution : Il faut écrire le flag d'interruption dans la routine d'interruption.
+
+3.4.5 Erreur dans le code : Il manque un & dans la ligne SerialTransmit(&ch,1); pour passer un pointeur sur le char.
